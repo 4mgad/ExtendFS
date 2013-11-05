@@ -5,6 +5,7 @@ A module to extend Node's default File System (fs) module to recursively copy/de
 
 Example:
 
+```
 var fs = require("ExtendFS");
 
 var fileExtension = fs.getExtension(filePath);
@@ -14,3 +15,4 @@ fs.copyFile(src, dest, onCopy);
 fs.copyDir(src, dest, onCopy, onCopyDir, onCopyFile);
 
 fs.deleteDir(dirPath, onDelete, onDeleteDir, onDeleteFile);
+```
