@@ -27,11 +27,11 @@
       };
       onCopyDir = onCopyDir || function() {
       };
-      fs.mkdir(dest, function(err) {
-        if (err) {
-          onCopyDir(err);
-        } else {
-          if (fs.existsSync(src)) {
+      if (fs.existsSync(src)) {
+        fs.mkdir(dest, function(err) {
+          if (err) {
+            onCopyDir(err);
+          } else {
             fs.readdir(src, function(err, files) {
               if (err) {
                 onCopyDir(err);
@@ -67,11 +67,11 @@
                 });
               }
             });
-          } else {
-            onCopyDir(src + " does not exist");
           }
-        }
-      });
+        });
+      } else {
+        onCopyDir(src + " does not exist");
+      }
     };
 
     var _deleteDir = function(dirPath, onDeleteDir, onDeleteFile) {

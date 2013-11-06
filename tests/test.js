@@ -2,14 +2,16 @@ console.log('Testing ExtendFS.js');
 
 var fs = require("../ExtendFS.js");
 
+var currPath = __dirname + "/";
+
 var testCase1 = function() {
   console.log('Test Case #1');
-  fs.copyFile('css/styles.css', 'css/_styles.css', function(err) {
+  fs.copyFile(currPath + 'css/styles.css', currPath + 'css/_styles.css', function(err) {
     if (err) {
       console.log(err);
     } else {
-      if (fs.existsSync('css/_styles.css')) {
-        fs.unlinkSync('css/_styles.css');
+      if (fs.existsSync(currPath + 'css/_styles.css')) {
+        fs.unlinkSync(currPath + 'css/_styles.css');
         console.log('SUCCESS!');
         testCase2();
       } else {
@@ -23,11 +25,11 @@ var testCase2 = function() {
   console.log('Test Case #2');
   var numOfCopiedDirs = 0;
   var numOfCopiedFiles = 0;
-  fs.copyDir('js', '_js', function(err, sd, dd) {
+  fs.copyDir(currPath + 'js', currPath + '_js', function(err, sd, dd) {
     if (err) {
       console.log(err);
     } else {
-      if (fs.existsSync('_js') && numOfCopiedFiles === 11 && numOfCopiedDirs === 3) {
+      if (fs.existsSync(currPath + '_js') && numOfCopiedFiles === 11 && numOfCopiedDirs === 3) {
         console.log('SUCCESS!');
         testCase3();
       } else {
@@ -53,11 +55,11 @@ var testCase3 = function() {
   console.log('Test Case #3');
   var numOfDeletedDirs = 0;
   var numOfDeletedFiles = 0;
-  fs.deleteDir('_js', function(err, dirPath) {
+  fs.deleteDir(currPath + '_js', function(err, dirPath) {
     if (err) {
       console.log(err);
     } else {
-      if (!fs.existsSync('_js') && numOfDeletedFiles === 11 && numOfDeletedDirs === 3) {
+      if (!fs.existsSync(currPath + '_js') && numOfDeletedFiles === 11 && numOfDeletedDirs === 3) {
         console.log('SUCCESS!');
         testCase4();
       } else {

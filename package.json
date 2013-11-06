@@ -24,6 +24,6 @@
   },
   "preferGlobal": true,
   "scripts": {
-    "test": "node tests/test-ExtendFS.js"
+    "test": "node tests/test.js"
   }
 }
