@@ -15,4 +15,6 @@ fs.copyFile(src, dest, onCopy);
 fs.copyDir(src, dest, onCopy, onCopyDir, onCopyFile);
 
 fs.deleteDir(dirPath, onDelete, onDeleteDir, onDeleteFile);
+
+fs.createDirs(dirPath, onComplete, onCreateDir);
 ```

@@ -98,9 +98,56 @@ var testCase5 = function() {
   fs.copyDir('nosrcdir', 'dest', function(err, sd, dd) {
     if (err) {
       console.log('SUCCESS!');
+      testCase6();
     } else {
       console.log('FAILED');
     }
   });
+};
+
+var testCase6 = function() {
+  console.log('Test Case #6');
+
+  var success = true;
+
+  var testArr = [
+    'test1/test2/test3/test4',
+    'test1/test2/test3/test4/',
+    './test1/test2/test3/test4',
+    '../test1/test2/test3/test4',
+    '../../test1/test2/test3/test4',
+    '/test1/test2/test3/test4',
+    '/test1/test2//test3/test4'
+  ];
+
+  var idx = 0;
+  var test = function(index) {
+    var num = 0;
+    var dirPath = testArr[index];
+    fs.deleteDir(dirPath.substr(0, dirPath.indexOf('test2')), function(err, deletedDir) {
+      fs.createDirs(dirPath, function(err, createdDir) {
+        if (err) {
+          console.log(err);
+        } else {
+          if (createdDir === dirPath && num === 4) {
+            fs.deleteDir(dirPath.substr(0, dirPath.indexOf('test2')));
+            if (idx < (testArr.length - 1)) {
+              test(++idx);
+            }
+          } else {
+            success = false;
+          }
+        }
+      }, function(err, createdDir) {
+        num++;
+      });
+    });
+  };
+  test(idx);
+  if (success) {
+    console.log('SUCCESS!');
+  } else {
+    console.log('FAILED');
+  }
 };
 

@@ -121,6 +121,38 @@
       }
     };
 
+    var _createDirs = function(dirPath, onCreateDir) {
+      onCreateDir = onCreateDir || function() {
+      };
+      var createDir = function(dir) {
+        if (!fs.existsSync(dir)) {
+          fs.mkdirSync(dir);
+          onCreateDir(null, dir);
+        }
+      };
+      var dirArr = dirPath.split('/');
+      var currDir = '';
+      try {
+        dirArr.forEach(function(dir, idx) {
+          if (dir === '.') {
+            currDir += dir + '/';
+          } else if (dir === '..') {
+            currDir += dir + '/';
+          } else if (dir === '') {
+            currDir += '/' + dir;
+          } else {
+            currDir += dir;
+            if (idx < (dirArr.length - 1)) {
+              currDir += '/';
+            }
+            createDir(currDir);
+          }
+        });
+      } catch (err) {
+        onCreateDir(err);
+      }
+    };
+
     return {
       getExtension: function(filePath) {
         var i = filePath.lastIndexOf('.');
@@ -164,6 +196,26 @@
             }
           }
         }, onDeleteFile);
+      },
+      createDirs: function(dirPath, onComplete, onCreateDir) {
+        onComplete = onComplete || function() {
+        };
+        onCreateDir = onCreateDir || function() {
+        };
+        if (fs.existsSync(dirPath)) {
+          onComplete(null, dirPath);
+        } else {
+          _createDirs(dirPath, function(err, createdDir) {
+            if (err) {
+              onComplete(err);
+            } else {
+              onCreateDir(null, createdDir);
+              if (createdDir === dirPath) {
+                onComplete(null, createdDir);
+              }
+            }
+          });
+        }
       }
     };
   })();
