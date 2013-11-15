@@ -1,10 +1,9 @@
 {
   "name": "extendfs",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "ExtendFS is a module to extend Node's default File System (fs) module to recursively copy/delete directories with callbacks to notify the caller upon each successful copy/delete of a file or directory and upon completion of the whole process.",
   "author": "Amgad Youssef <ay@amgad.us>",
-  "contributors": [
-  ],
+  "contributors": [],
   "main": "ExtendFS.js",
   "repository": {
     "type": "git",
@@ -13,9 +12,17 @@
   "bugs": {
     "url": "https://github.com/4mgad/ExtendFS/issues"
   },
-  "keywords": ["fs", "file system", "directory", "file", "copy", "delete", "util", "utility"],
-  "dependencies": {
-  },
+  "keywords": [
+    "fs",
+    "file system",
+    "directory",
+    "file",
+    "copy",
+    "delete",
+    "util",
+    "utility"
+  ],
+  "dependencies": {},
   "engines": {
     "node": ">=0.6"
   },
