@@ -107,6 +107,18 @@ var testCase5 = function() {
 
 var testCase6 = function() {
   console.log('Test Case #6');
+  fs.copyDir(currPath + 'js', currPath + 'js/test', function(err, sd, dd) {
+    if (err) {
+      console.log('SUCCESS!');
+      testCase7();
+    } else {
+      console.log('FAILED');
+    }
+  });
+};
+
+var testCase7 = function() {
+  console.log('Test Case #7');
 
   var success = true;
 
@@ -130,10 +142,21 @@ var testCase6 = function() {
           console.log(err);
         } else {
           if (createdDir === dirPath && num === 4) {
-            fs.deleteDir(dirPath.substr(0, dirPath.indexOf('test2')));
-            if (idx < (testArr.length - 1)) {
-              test(++idx);
-            }
+            fs.deleteDir(dirPath.substr(0, dirPath.indexOf('test2')), function(err) {
+              if (err) {
+                console.log(err);
+                success = false;
+              }
+              if (idx >= (testArr.length - 1)) {
+                if (success) {
+                  console.log('SUCCESS!');
+                } else {
+                  console.log('FAILED');
+                }
+              } else {
+                test(++idx);
+              }
+            });
           } else {
             success = false;
           }
@@ -144,10 +167,5 @@ var testCase6 = function() {
     });
   };
   test(idx);
-  if (success) {
-    console.log('SUCCESS!');
-  } else {
-    console.log('FAILED');
-  }
 };
 

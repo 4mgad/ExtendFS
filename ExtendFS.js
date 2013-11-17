@@ -32,46 +32,76 @@
           if (err) {
             onCopyDir(err);
           } else {
-            fs.readdir(src, function(err, files) {
-              if (err) {
-                onCopyDir(err);
-              } else {
-                var count = files.length;
-                var check = function(decrement) {
-                  decrement && count--;
-                  if (count <= 0) {
-                    onCopyDir(null, src, dest);
-                  }
-                };
-                check();
-                files.forEach(function(file) {
-                  var sf = src + "/" + file;
-                  var df = dest + "/" + file;
-                  if (fs.statSync(sf).isDirectory()) {// copy dir recuresively
-                    _copyDir(sf, df, function(err, sd, dd) {
-                      onCopyDir(err, sd, dd);
-                      if (!err && sf === sd && df === dd) {
-                        check(true);
-                      }
-                    }, onCopyFile);
-                  } else {
-                    _copyFile(sf, df, function(err) {
-                      if (err) {
-                        onCopyFile(err);
-                      } else {
-                        onCopyFile(null, sf, df);
-                        check(true);
-                      }
-                    });
-                  }
-                });
-              }
-            });
+            var rsrc = fs.realpathSync(src);
+            var rdest = fs.realpathSync(dest);
+            if (rdest.substr(0, rsrc.length) === rsrc) {
+              deleteDir(rdest, function(err, deletedDir) {
+                if (err) {
+                  onCopyDir(err);
+                }
+              });
+              onCopyDir('Copying to a sub directory is not allowed');
+            } else {
+              fs.readdir(src, function(err, files) {
+                if (err) {
+                  onCopyDir(err);
+                } else {
+                  var count = files.length;
+                  var check = function(decrement) {
+                    decrement && count--;
+                    if (count <= 0) {
+                      onCopyDir(null, src, dest);
+                    }
+                  };
+                  check();
+                  files.forEach(function(file) {
+                    var sf = src + "/" + file;
+                    var df = dest + "/" + file;
+                    if (fs.statSync(sf).isDirectory()) {// copy dir recuresively
+                      _copyDir(sf, df, function(err, sd, dd) {
+                        onCopyDir(err, sd, dd);
+                        if (!err && sf === sd && df === dd) {
+                          check(true);
+                        }
+                      }, onCopyFile);
+                    } else {
+                      _copyFile(sf, df, function(err) {
+                        if (err) {
+                          onCopyFile(err);
+                        } else {
+                          onCopyFile(null, sf, df);
+                          check(true);
+                        }
+                      });
+                    }
+                  });
+                }
+              });
+            }
           }
         });
       } else {
         onCopyDir(src + " does not exist");
       }
+    };
+
+    var copyDir = function(src, dest, onCopy, onCopyDir, onCopyFile) {
+      onCopy = onCopy || function() {
+      };
+      onCopyDir = onCopyDir || function() {
+      };
+      onCopyFile = onCopyFile || function() {
+      };
+      _copyDir(src, dest, function(err, _src, _dest) {
+        if (err) {
+          onCopy(err);
+        } else {
+          onCopyDir(null, _src, _dest);
+          if (dest === _dest) {
+            onCopy(null, src, dest);
+          }
+        }
+      }, onCopyFile);
     };
 
     var _deleteDir = function(dirPath, onDeleteDir, onDeleteFile) {
@@ -121,6 +151,25 @@
       }
     };
 
+    var deleteDir = function(dirPath, onDelete, onDeleteDir, onDeleteFile) {
+      onDelete = onDelete || function() {
+      };
+      onDeleteDir = onDeleteDir || function() {
+      };
+      onDeleteFile = onDeleteFile || function() {
+      };
+      _deleteDir(dirPath, function(err, deletedDir) {
+        if (err) {
+          onDelete(err);
+        } else {
+          onDeleteDir(null, deletedDir);
+          if (deletedDir === dirPath) {
+            onDelete(null, deletedDir);
+          }
+        }
+      }, onDeleteFile);
+    };
+
     var _createDirs = function(dirPath, onCreateDir) {
       onCreateDir = onCreateDir || function() {
       };
@@ -153,70 +202,36 @@
       }
     };
 
+    var createDirs = function(dirPath, onComplete, onCreateDir) {
+      onComplete = onComplete || function() {
+      };
+      onCreateDir = onCreateDir || function() {
+      };
+      if (fs.existsSync(dirPath)) {
+        onComplete(null, dirPath);
+      } else {
+        _createDirs(dirPath, function(err, createdDir) {
+          if (err) {
+            onComplete(err);
+          } else {
+            onCreateDir(null, createdDir);
+            if (createdDir === dirPath) {
+              onComplete(null, createdDir);
+            }
+          }
+        });
+      }
+    };
+
     return {
       getExtension: function(filePath) {
         var i = filePath.lastIndexOf('.');
         return (i < 0) ? '' : filePath.substr(i + 1);
       },
-      copyFile: function(src, dest, onCopy) {
-        _copyFile(src, dest, onCopy);
-      },
-      copyDir: function(src, dest, onCopy, onCopyDir, onCopyFile) {
-        onCopy = onCopy || function() {
-        };
-        onCopyDir = onCopyDir || function() {
-        };
-        onCopyFile = onCopyFile || function() {
-        };
-        _copyDir(src, dest, function(err, _src, _dest) {
-          if (err) {
-            onCopy(err);
-          } else {
-            onCopyDir(null, _src, _dest);
-            if (dest === _dest) {
-              onCopy(null, src, dest);
-            }
-          }
-        }, onCopyFile);
-      },
-      deleteDir: function(dirPath, onDelete, onDeleteDir, onDeleteFile) {
-        onDelete = onDelete || function() {
-        };
-        onDeleteDir = onDeleteDir || function() {
-        };
-        onDeleteFile = onDeleteFile || function() {
-        };
-        _deleteDir(dirPath, function(err, deletedDir) {
-          if (err) {
-            onDelete(err);
-          } else {
-            onDeleteDir(null, deletedDir);
-            if (deletedDir === dirPath) {
-              onDelete(null, deletedDir);
-            }
-          }
-        }, onDeleteFile);
-      },
-      createDirs: function(dirPath, onComplete, onCreateDir) {
-        onComplete = onComplete || function() {
-        };
-        onCreateDir = onCreateDir || function() {
-        };
-        if (fs.existsSync(dirPath)) {
-          onComplete(null, dirPath);
-        } else {
-          _createDirs(dirPath, function(err, createdDir) {
-            if (err) {
-              onComplete(err);
-            } else {
-              onCreateDir(null, createdDir);
-              if (createdDir === dirPath) {
-                onComplete(null, createdDir);
-              }
-            }
-          });
-        }
-      }
+      copyFile: _copyFile,
+      copyDir: copyDir,
+      deleteDir: deleteDir,
+      createDirs: createDirs
     };
   })();
 
