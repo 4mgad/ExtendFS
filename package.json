@@ -1,33 +1,36 @@
 {
-  "name": "extendfs",
-  "version": "2.0.2",
-  "description": "ExtendFS is a module to extend Node's default File System (fs) module to recursively copy/delete directories with callbacks to notify the caller upon each successful copy/delete of a file or directory and upon completion of the whole process.",
-  "author": "Amgad Youssef <ay@amgad.us>",
-  "contributors": [],
-  "main": "ExtendFS.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/4mgad/ExtendFS.git"
-  },
-  "bugs": {
-    "url": "https://github.com/4mgad/ExtendFS/issues"
-  },
-  "keywords": [
-    "fs",
-    "file system",
-    "directory",
-    "file",
-    "copy",
-    "delete",
-    "util",
-    "utility"
-  ],
-  "dependencies": {},
-  "engines": {
-    "node": ">=0.6"
-  },
-  "preferGlobal": true,
-  "scripts": {
-    "test": "node tests/test.js"
-  }
+	"name": "extendfs",
+	"version": "2.0.2",
+	"description": "ExtendFS is a module to extend Node's default File System (fs) module to recursively copy/delete directories with callbacks to notify the caller upon each successful copy/delete of a file or directory and upon completion of the whole process.",
+	"author": "AJ <aj@amgad.us>",
+	"main": "ExtendFS.js",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/4mgad/ExtendFS.git"
+	},
+	"bugs": {
+		"url": "https://github.com/4mgad/ExtendFS/issues"
+	},
+	"keywords": [
+		"fs",
+		"file system",
+		"directory",
+		"file",
+		"copy",
+		"delete",
+		"util",
+		"utility"
+	],
+	"engines": {
+		"node": "8.1.*",
+		"npm": "5.0.*"
+	},
+	"scripts": {
+		"build": "babel ExtendFS.jsx --out-file ExtendFS.js",
+		"test": "npm build && node tests/test.js"
+	},
+	"devDependencies": {
+		"babel-cli": "^6.24.1",
+		"babel-preset-env": "^1.5.2"
+	}
 }
