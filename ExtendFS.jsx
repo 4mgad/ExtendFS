@@ -207,3 +207,5 @@ export function createDirs(dirPath, onComplete, onCreateDir) {
 		});
 	}
 }
+
+export * from 'fs';

@@ -27,10 +27,11 @@
 	},
 	"scripts": {
 		"build": "babel ExtendFS.jsx --out-file ExtendFS.js",
-		"test": "npm build && node tests/test.js"
+		"test": "npm run build && mocha"
 	},
 	"devDependencies": {
 		"babel-cli": "^6.24.1",
-		"babel-preset-env": "^1.5.2"
+		"babel-preset-env": "^1.5.2",
+		"mocha": "^3.4.2"
 	}
 }
